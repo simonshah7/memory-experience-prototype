@@ -15,7 +15,7 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 type StageId = 'brief' | 'live' | 'reveal' | 'story' | 'guests' | 'vault'
@@ -138,14 +138,30 @@ const guests = [
 ]
 
 function App() {
-  const [activeStage, setActiveStage] = useState<StageId>('brief')
+  const [activeStage, setActiveStage] = useState<StageId>(() => {
+    const hashStage = window.location.hash.replace('#', '') as StageId
+    return stages.some((stage) => stage.id === hashStage) ? hashStage : 'brief'
+  })
   const stagePanelRef = useRef<HTMLElement | null>(null)
   const active = useMemo(
     () => stages.find((stage) => stage.id === activeStage) ?? stages[0],
     [activeStage],
   )
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hashStage = window.location.hash.replace('#', '') as StageId
+      if (stages.some((stage) => stage.id === hashStage)) {
+        setActiveStage(hashStage)
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
   const selectStage = (stage: StageId, shouldScroll = true) => {
     setActiveStage(stage)
+    window.history.replaceState(null, '', `#${stage}`)
     if (shouldScroll) {
       window.requestAnimationFrame(() => {
         stagePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -206,13 +222,13 @@ function App() {
         </header>
 
         <section className="stage-panel" ref={stagePanelRef}>
-          <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="mobile" />
           <div className="stage-heading">
             <span>{active.eyebrow}</span>
             <h2>{active.title}</h2>
             <p>{active.description}</p>
           </div>
           <StageContent activeStage={activeStage} setActiveStage={selectStage} />
+          <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="mobile" />
         </section>
       </section>
     </main>
@@ -237,11 +253,14 @@ function StageNav({
         const Icon = stage.icon
         const selected = stage.id === activeStage
         return (
-          <button
+          <a
             className={selected ? 'stage-button active' : 'stage-button'}
+            href={`#${stage.id}`}
             key={stage.id}
-            onClick={() => setActiveStage(stage.id)}
-            type="button"
+            onClick={(event) => {
+              event.preventDefault()
+              setActiveStage(stage.id)
+            }}
           >
             <Icon size={18} aria-hidden="true" />
             <span>
@@ -249,7 +268,7 @@ function StageNav({
               {stage.title}
             </span>
             <ChevronRight size={16} aria-hidden="true" />
-          </button>
+          </a>
         )
       })}
     </nav>

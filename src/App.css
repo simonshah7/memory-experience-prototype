@@ -99,6 +99,7 @@
   padding: 10px;
   color: var(--muted);
   text-align: left;
+  text-decoration: none;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -913,7 +914,8 @@
   border-radius: 7px;
 }
 
-button:focus-visible {
+button:focus-visible,
+.stage-button:focus-visible {
   outline: 3px solid rgba(154, 87, 55, 0.28);
   outline-offset: 2px;
 }
@@ -924,23 +926,6 @@ button:focus-visible {
   }
 
   .side-rail {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    height: auto;
-    padding: 12px 18px;
-    background: rgba(247, 244, 238, 0.94);
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    backdrop-filter: blur(16px);
-  }
-
-  .brand-lockup {
-    max-width: 100%;
-  }
-
-  .rail-stage-list,
-  .rail-note {
     display: none;
   }
 
@@ -951,23 +936,26 @@ button:focus-visible {
     padding-top: 30px;
   }
 
+  .experience-canvas {
+    padding-bottom: 0;
+  }
+
   .hero-photo {
     min-height: 430px;
   }
 
   .mobile-stage-list {
-    position: sticky;
-    top: 69px;
-    z-index: 9;
+    position: static;
     display: flex;
     gap: 8px;
     max-width: none;
-    margin: -34px calc(clamp(24px, 5vw, 72px) * -1) 24px;
-    padding: 10px clamp(24px, 5vw, 72px);
+    margin-top: 18px;
+    padding: 10px;
     overflow-x: auto;
-    background: rgba(255, 252, 247, 0.95);
-    border-bottom: 1px solid var(--line);
-    backdrop-filter: blur(16px);
+    background: #f7f4ee;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: none;
     scrollbar-width: none;
   }
 
@@ -977,17 +965,41 @@ button:focus-visible {
 
   .mobile-stage-list .stage-button {
     width: auto;
-    min-width: 170px;
-    min-height: 48px;
+    min-width: 148px;
+    min-height: 46px;
     grid-template-columns: 18px 1fr;
     flex: 0 0 auto;
     padding: 9px 11px;
+    color: var(--muted);
     background: #ffffff;
     border-color: var(--line);
   }
 
   .mobile-stage-list .stage-button > svg:last-child {
     display: none;
+  }
+
+  .mobile-stage-list .stage-button span {
+    color: var(--ink);
+  }
+
+  .mobile-stage-list .stage-button small {
+    color: var(--muted);
+  }
+
+  .mobile-stage-list .stage-button.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    box-shadow: none;
+  }
+
+  .mobile-stage-list .stage-button.active,
+  .mobile-stage-list .stage-button.active span {
+    color: #fffaf2;
+  }
+
+  .mobile-stage-list .stage-button.active small {
+    color: rgba(255, 250, 242, 0.64);
   }
 
   .mobile-stage-list .stage-button span {
@@ -1081,19 +1093,17 @@ button:focus-visible {
   }
 
   .mobile-stage-list {
-    top: 55px;
-    margin: -24px -14px 20px;
-    padding: 9px 14px;
+    padding: 8px;
   }
 
   .mobile-stage-list .stage-button {
-    min-width: 148px;
+    min-width: 138px;
     min-height: 44px;
   }
 
   .stage-panel {
     padding-top: 24px;
-    padding-bottom: 42px;
+    padding-bottom: 52px;
   }
 
   .stage-heading {
