@@ -85,6 +85,39 @@
   gap: 7px;
 }
 
+.role-tabs {
+  display: grid;
+  gap: 8px;
+}
+
+.mobile-role-tabs {
+  display: none;
+}
+
+.role-tab {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--ink);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.role-tab span {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.role-tab.active {
+  color: #fffaf2;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
 .mobile-stage-list {
   display: none;
 }
@@ -260,6 +293,14 @@
   inset: 0;
 }
 
+.visual-card img,
+.reveal-player img,
+.chapter-card img,
+.featured-chapter img {
+  position: absolute;
+  inset: 0;
+}
+
 .hero-photo img,
 .visual-card img,
 .reveal-player img,
@@ -330,6 +371,178 @@
   gap: 18px;
 }
 
+.platform-screen,
+.guest-screen {
+  display: grid;
+  gap: 18px;
+}
+
+.command-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  background: #203c39;
+  color: #fffaf2;
+}
+
+.command-hero h3,
+.decision-panel h3,
+.guest-delivery h3 {
+  margin: 6px 0;
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.command-hero h3,
+.command-hero p,
+.command-hero .field-label {
+  color: #fffaf2;
+}
+
+.command-hero p,
+.decision-panel p,
+.guest-delivery p {
+  margin: 0;
+  color: var(--body);
+  line-height: 1.55;
+}
+
+.command-status {
+  min-width: 170px;
+  padding: 16px;
+  color: var(--ink);
+  background: #fffaf2;
+  border-radius: 8px;
+}
+
+.command-status strong,
+.command-status span {
+  display: block;
+}
+
+.command-status span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric-card {
+  display: grid;
+  gap: 8px;
+}
+
+.metric-card span,
+.workflow-row span,
+.success-state {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 500;
+}
+
+.metric-card p {
+  margin: 0;
+  color: var(--body);
+  line-height: 1.45;
+}
+
+.workflow-board {
+  display: grid;
+  gap: 12px;
+}
+
+.workflow-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  background: #f9f5ed;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.workflow-row strong {
+  color: var(--ink);
+}
+
+.workflow-row p {
+  margin: 4px 0 0;
+  color: var(--body);
+  line-height: 1.45;
+}
+
+.decision-panel,
+.guest-delivery {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.guest-screen {
+  grid-template-columns: minmax(300px, 0.65fr) minmax(0, 1fr);
+}
+
+.guest-phone-large {
+  display: grid;
+  gap: 14px;
+}
+
+.guest-phone-large img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.guest-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.guest-actions button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: transparent;
+  font-weight: 800;
+}
+
+.success-state {
+  padding: 12px;
+  color: #fffaf2;
+  background: #203c39;
+  border-radius: 8px;
+}
+
+.guest-table.compact article {
+  grid-template-columns: minmax(0, 1fr) 150px 42px;
+}
+
 .brief-grid {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
 }
@@ -346,6 +559,11 @@
 
 .module {
   padding: 22px;
+}
+
+.module.command-hero {
+  background: #203c39;
+  border-color: #203c39;
 }
 
 .wide {
@@ -733,6 +951,8 @@
   overflow: hidden;
   border-radius: 8px;
   background: var(--ink);
+  background-position: center;
+  background-size: cover;
 }
 
 .featured-chapter::after {
@@ -782,6 +1002,8 @@
 .chapter-card {
   position: relative;
   min-height: 480px;
+  background-position: center;
+  background-size: cover;
 }
 
 .chapter-card div {
@@ -929,6 +1151,23 @@ button:focus-visible,
     display: none;
   }
 
+  .mobile-role-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .mobile-role-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-role-tabs .role-tab {
+    flex: 0 0 auto;
+    min-width: 154px;
+  }
+
   .hero-band {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -1016,7 +1255,18 @@ button:focus-visible,
   .content-grid,
   .brief-columns,
   .reveal-layout,
-  .chapter-grid {
+  .chapter-grid,
+  .metric-grid,
+  .guest-screen {
+    grid-template-columns: 1fr;
+  }
+
+  .command-hero {
+    display: grid;
+  }
+
+  .workflow-row,
+  .guest-table.compact article {
     grid-template-columns: 1fr;
   }
 
@@ -1139,7 +1389,10 @@ button:focus-visible,
   .visual-card h3,
   .chapter-card h3,
   .referral-card h3,
-  .next-step-card h3 {
+  .next-step-card h3,
+  .command-hero h3,
+  .decision-panel h3,
+  .guest-delivery h3 {
     font-size: 26px;
   }
 

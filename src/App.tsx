@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 type StageId = 'brief' | 'live' | 'reveal' | 'story' | 'guests' | 'vault'
+type RoleId = 'photographer' | 'client' | 'guest'
 
 const stages: Array<{
   id: StageId
@@ -68,6 +69,36 @@ const stages: Array<{
     title: 'Memory Vault',
     description: 'Keep the relationship alive with anniversaries, print prompts, and family history.',
     icon: Archive,
+  },
+]
+
+const roles: Array<{
+  id: RoleId
+  label: string
+  title: string
+  description: string
+  icon: typeof Camera
+}> = [
+  {
+    id: 'photographer',
+    label: 'Photographer view',
+    title: 'Command Center',
+    description: 'Run the whole memory experience from one operational workspace.',
+    icon: Camera,
+  },
+  {
+    id: 'client',
+    label: 'Client view',
+    title: 'Client Experience',
+    description: 'Show the couple the premium journey they receive before and after the event.',
+    icon: Heart,
+  },
+  {
+    id: 'guest',
+    label: 'Guest view',
+    title: 'Guest Link',
+    description: 'Let guests contribute and receive private, shareable memories.',
+    icon: Users,
   },
 ]
 
@@ -138,6 +169,18 @@ const guests = [
 ]
 
 function App() {
+  const [activeRole, setActiveRole] = useState<RoleId>(() => {
+    const hashValue = window.location.hash.replace('#', '')
+    const hashRole = hashValue as RoleId
+    const hashStage = hashValue as StageId
+    if (roles.some((role) => role.id === hashRole)) {
+      return hashRole
+    }
+    if (stages.some((stage) => stage.id === hashStage)) {
+      return 'client'
+    }
+    return 'photographer'
+  })
   const [activeStage, setActiveStage] = useState<StageId>(() => {
     const hashStage = window.location.hash.replace('#', '') as StageId
     return stages.some((stage) => stage.id === hashStage) ? hashStage : 'brief'
@@ -149,8 +192,14 @@ function App() {
   )
   useEffect(() => {
     const handleHashChange = () => {
-      const hashStage = window.location.hash.replace('#', '') as StageId
+      const hashValue = window.location.hash.replace('#', '')
+      const hashRole = hashValue as RoleId
+      const hashStage = hashValue as StageId
+      if (roles.some((role) => role.id === hashRole)) {
+        setActiveRole(hashRole)
+      }
       if (stages.some((stage) => stage.id === hashStage)) {
+        setActiveRole('client')
         setActiveStage(hashStage)
       }
     }
@@ -160,6 +209,7 @@ function App() {
   }, [])
 
   const selectStage = (stage: StageId, shouldScroll = true) => {
+    setActiveRole('client')
     setActiveStage(stage)
     window.history.replaceState(null, '', `#${stage}`)
     if (shouldScroll) {
@@ -168,6 +218,16 @@ function App() {
       })
     }
   }
+  const selectRole = (role: RoleId, shouldScroll = true) => {
+    setActiveRole(role)
+    window.history.replaceState(null, '', `#${role}`)
+    if (shouldScroll) {
+      window.requestAnimationFrame(() => {
+        stagePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+  }
+  const activeRoleDetails = roles.find((role) => role.id === activeRole) ?? roles[0]
 
   return (
     <main className="app-shell">
@@ -180,7 +240,11 @@ function App() {
           </div>
         </div>
 
-        <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="rail" />
+        <RoleNav activeRole={activeRole} setActiveRole={selectRole} variant="rail" />
+
+        {activeRole === 'client' && (
+          <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="rail" />
+        )}
 
         <div className="rail-note">
           <Sparkles size={18} aria-hidden="true" />
@@ -202,9 +266,13 @@ function App() {
                 <Play size={17} aria-hidden="true" />
                 Preview reveal
               </button>
-              <button className="secondary-action" type="button" onClick={() => selectStage('brief')}>
-                <CalendarDays size={17} aria-hidden="true" />
-                View client brief
+              <button
+                className="secondary-action"
+                type="button"
+                onClick={() => selectRole('photographer')}
+              >
+                <Camera size={17} aria-hidden="true" />
+                Open platform
               </button>
             </div>
           </div>
@@ -222,16 +290,57 @@ function App() {
         </header>
 
         <section className="stage-panel" ref={stagePanelRef}>
+          <RoleNav activeRole={activeRole} setActiveRole={selectRole} variant="mobile" />
           <div className="stage-heading">
-            <span>{active.eyebrow}</span>
-            <h2>{active.title}</h2>
-            <p>{active.description}</p>
+            <span>{activeRoleDetails.label}</span>
+            <h2>{activeRole === 'client' ? active.title : activeRoleDetails.title}</h2>
+            <p>{activeRole === 'client' ? active.description : activeRoleDetails.description}</p>
           </div>
-          <StageContent activeStage={activeStage} setActiveStage={selectStage} />
-          <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="mobile" />
+          {activeRole === 'photographer' && (
+            <PhotographerCommandCenter setActiveRole={selectRole} setActiveStage={selectStage} />
+          )}
+          {activeRole === 'client' && (
+            <>
+              <StageContent activeStage={activeStage} setActiveStage={selectStage} />
+              <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="mobile" />
+            </>
+          )}
+          {activeRole === 'guest' && <GuestExperience setActiveRole={selectRole} />}
         </section>
       </section>
     </main>
+  )
+}
+
+function RoleNav({
+  activeRole,
+  setActiveRole,
+  variant,
+}: {
+  activeRole: RoleId
+  setActiveRole: (role: RoleId) => void
+  variant: 'rail' | 'mobile'
+}) {
+  return (
+    <nav className={variant === 'mobile' ? 'role-tabs mobile-role-tabs' : 'role-tabs rail-role-tabs'}>
+      {roles.map((role) => {
+        const Icon = role.icon
+        return (
+          <a
+            className={activeRole === role.id ? 'role-tab active' : 'role-tab'}
+            href={`#${role.id}`}
+            key={role.id}
+            onClick={(event) => {
+              event.preventDefault()
+              setActiveRole(role.id)
+            }}
+          >
+            <Icon size={17} aria-hidden="true" />
+            <span>{role.label}</span>
+          </a>
+        )
+      })}
+    </nav>
   )
 }
 
@@ -272,6 +381,161 @@ function StageNav({
         )
       })}
     </nav>
+  )
+}
+
+function PhotographerCommandCenter({
+  setActiveRole,
+  setActiveStage,
+}: {
+  setActiveRole: (role: RoleId) => void
+  setActiveStage: (stage: StageId) => void
+}) {
+  return (
+    <div className="platform-screen">
+      <section className="module command-hero">
+        <div>
+          <span className="field-label">Today’s event</span>
+          <h3>Amelia & Jonah</h3>
+          <p>Mayfield House · Saturday · 126 guests · Premium memory experience</p>
+        </div>
+        <div className="command-status">
+          <strong>Reveal ready</strong>
+          <span>14 selected frames</span>
+        </div>
+      </section>
+
+      <section className="metric-grid">
+        <article className="module metric-card">
+          <span>Brief</span>
+          <strong>92%</strong>
+          <p>Emotional priorities, key people, timeline and tone are complete.</p>
+        </article>
+        <article className="module metric-card">
+          <span>Guest uploads</span>
+          <strong>38</strong>
+          <p>Photos, clips and notes have arrived from the private guest link.</p>
+        </article>
+        <article className="module metric-card">
+          <span>Curation</span>
+          <strong>214</strong>
+          <p>Frames grouped into reactions, family, atmosphere and story beats.</p>
+        </article>
+        <article className="module metric-card">
+          <span>Opportunities</span>
+          <strong>9</strong>
+          <p>Guest links, print moments and referral touchpoints are ready.</p>
+        </article>
+      </section>
+
+      <div className="content-grid">
+        <section className="module workflow-board">
+          <div className="module-head">
+            <div>
+              <span>Workflow</span>
+              <h3>Experience orchestration</h3>
+            </div>
+            <Sparkles size={19} aria-hidden="true" />
+          </div>
+          {[
+            ['Memory brief', 'Client completed emotional priorities and family context.', 'Ready'],
+            ['Guest stream', 'Upload link is live; 17 contributors have added context.', 'Live'],
+            ['AI grouping', 'Potential chapters and people clusters are prepared.', 'Review'],
+            ['First reveal', 'Cinematic preview can be sent tonight.', 'Ready'],
+          ].map(([title, detail, status]) => (
+            <article className="workflow-row" key={title}>
+              <div>
+                <strong>{title}</strong>
+                <p>{detail}</p>
+              </div>
+              <span>{status}</span>
+            </article>
+          ))}
+        </section>
+
+        <section className="module decision-panel">
+          <span className="field-label">What the photographer does next</span>
+          <h3>Approve the emotional sequence, then send the reveal.</h3>
+          <p>
+            The system has prepared the structure; the photographer stays in control of taste,
+            sensitivity and final delivery.
+          </p>
+          <div className="screen-actions stacked">
+            <button type="button" onClick={() => setActiveStage('reveal')}>
+              <Play size={17} aria-hidden="true" />
+              Preview client reveal
+            </button>
+            <button type="button" onClick={() => setActiveRole('guest')}>
+              <Users size={17} aria-hidden="true" />
+              View guest link
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+function GuestExperience({ setActiveRole }: { setActiveRole: (role: RoleId) => void }) {
+  const [uploaded, setUploaded] = useState(false)
+
+  return (
+    <div className="guest-screen">
+      <section className="module guest-phone-large">
+        <div className="phone-topbar">
+          <span>Private guest link</span>
+          <strong>Amelia & Jonah</strong>
+        </div>
+        <img
+          src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80"
+          alt="Wedding celebration preview"
+        />
+        <div className="guest-prompt">
+          <span>Memory prompt</span>
+          <p>Share one moment the couple might not have seen.</p>
+        </div>
+        <div className="guest-actions">
+          <button type="button" onClick={() => setUploaded(true)}>
+            <ImagePlus size={17} aria-hidden="true" />
+            Upload photo
+          </button>
+          <button type="button" onClick={() => setUploaded(true)}>
+            <MessageCircleHeart size={17} aria-hidden="true" />
+            Leave note
+          </button>
+        </div>
+        {uploaded && <div className="success-state">Added to the couple’s memory stream.</div>}
+      </section>
+
+      <section className="module guest-delivery">
+        <span className="field-label">After the event</span>
+        <h3>Guests receive a polished private collection.</h3>
+        <p>
+          Instead of a generic gallery link, each guest gets the people and moments they appear in,
+          with beautiful sharing and a soft referral path back to the photographer.
+        </p>
+        <div className="guest-table compact">
+          {guests.map((guest) => (
+            <article key={guest.name}>
+              <div>
+                <strong>{guest.name}</strong>
+                <span>{guest.relation}</span>
+              </div>
+              <small>{guest.status}</small>
+              <button type="button" aria-label={`Share ${guest.name} collection`}>
+                <Share2 size={17} aria-hidden="true" />
+              </button>
+            </article>
+          ))}
+        </div>
+        <div className="screen-actions">
+          <button type="button" onClick={() => setActiveRole('client')}>
+            <Heart size={17} aria-hidden="true" />
+            See client experience
+          </button>
+        </div>
+      </section>
+    </div>
   )
 }
 
@@ -495,7 +759,10 @@ function StageContent({
               </button>
             ))}
           </div>
-          <div className="featured-chapter">
+          <div
+            className="featured-chapter"
+            style={{ backgroundImage: `url(${chapters[0].image})` }}
+          >
             <img src={chapters[0].image} alt="Anticipation wedding chapter" />
             <div>
               <span>{chapters[0].count} images</span>
@@ -506,7 +773,11 @@ function StageContent({
         </section>
         <div className="chapter-grid">
           {chapters.map((chapter) => (
-            <article className="chapter-card" key={chapter.name}>
+            <article
+              className="chapter-card"
+              key={chapter.name}
+              style={{ backgroundImage: `url(${chapter.image})` }}
+            >
               <img src={chapter.image} alt={`${chapter.name} wedding chapter`} />
               <div>
                 <span>{chapter.count} images</span>
