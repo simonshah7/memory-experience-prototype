@@ -146,7 +146,7 @@ function App() {
 
   return (
     <main className="app-shell">
-      <aside className="side-rail" aria-label="Memory experience stages">
+      <aside className="side-rail">
         <div className="brand-lockup">
           <span className="brand-mark">MA</span>
           <div>
@@ -155,27 +155,7 @@ function App() {
           </div>
         </div>
 
-        <nav className="stage-list">
-          {stages.map((stage) => {
-            const Icon = stage.icon
-            const selected = stage.id === activeStage
-            return (
-              <button
-                className={selected ? 'stage-button active' : 'stage-button'}
-                key={stage.id}
-                onClick={() => setActiveStage(stage.id)}
-                type="button"
-              >
-                <Icon size={18} aria-hidden="true" />
-                <span>
-                  <small>{stage.eyebrow}</small>
-                  {stage.title}
-                </span>
-                <ChevronRight size={16} aria-hidden="true" />
-              </button>
-            )
-          })}
-        </nav>
+        <StageNav activeStage={activeStage} setActiveStage={setActiveStage} variant="rail" />
 
         <div className="rail-note">
           <Sparkles size={18} aria-hidden="true" />
@@ -217,6 +197,7 @@ function App() {
         </header>
 
         <section className="stage-panel">
+          <StageNav activeStage={activeStage} setActiveStage={setActiveStage} variant="mobile" />
           <div className="stage-heading">
             <span>{active.eyebrow}</span>
             <h2>{active.title}</h2>
@@ -226,6 +207,43 @@ function App() {
         </section>
       </section>
     </main>
+  )
+}
+
+function StageNav({
+  activeStage,
+  setActiveStage,
+  variant,
+}: {
+  activeStage: StageId
+  setActiveStage: (stage: StageId) => void
+  variant: 'rail' | 'mobile'
+}) {
+  return (
+    <nav
+      className={variant === 'mobile' ? 'stage-list mobile-stage-list' : 'stage-list rail-stage-list'}
+      aria-label="Memory experience stages"
+    >
+      {stages.map((stage) => {
+        const Icon = stage.icon
+        const selected = stage.id === activeStage
+        return (
+          <button
+            className={selected ? 'stage-button active' : 'stage-button'}
+            key={stage.id}
+            onClick={() => setActiveStage(stage.id)}
+            type="button"
+          >
+            <Icon size={18} aria-hidden="true" />
+            <span>
+              <small>{stage.eyebrow}</small>
+              {stage.title}
+            </span>
+            <ChevronRight size={16} aria-hidden="true" />
+          </button>
+        )
+      })}
+    </nav>
   )
 }
 

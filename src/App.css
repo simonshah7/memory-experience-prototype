@@ -1,7 +1,7 @@
 .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 286px minmax(0, 1fr);
   background: var(--paper);
 }
 
@@ -11,8 +11,8 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: 28px;
+  gap: 22px;
+  padding: 22px;
   color: var(--ink);
   background: #f7f4ee;
   border-right: 1px solid var(--line);
@@ -82,17 +82,21 @@
 
 .stage-list {
   display: grid;
-  gap: 8px;
+  gap: 7px;
+}
+
+.mobile-stage-list {
+  display: none;
 }
 
 .stage-button {
   width: 100%;
-  min-height: 68px;
+  min-height: 58px;
   display: grid;
   grid-template-columns: 22px 1fr 16px;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  padding: 10px;
   color: var(--muted);
   text-align: left;
   background: transparent;
@@ -105,13 +109,13 @@
   min-width: 0;
   color: var(--ink);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.2;
 }
 
 .stage-button small {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
@@ -135,7 +139,7 @@
   display: grid;
   grid-template-columns: 20px 1fr;
   gap: 12px;
-  padding: 16px;
+  padding: 14px;
   color: var(--ink);
   background: #ffffff;
   border: 1px solid var(--line);
@@ -152,12 +156,12 @@
 }
 
 .hero-band {
-  min-height: 620px;
+  min-height: 560px;
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.8fr);
   gap: 44px;
   align-items: center;
-  padding: 44px clamp(24px, 5vw, 72px) 38px;
+  padding: 38px clamp(24px, 5vw, 72px) 34px;
   background: #fffcf7;
   border-bottom: 1px solid var(--line);
 }
@@ -182,7 +186,7 @@
 
 .hero-copy h1 {
   max-width: 690px;
-  margin: 18px 0 18px;
+  margin: 16px 0;
   color: var(--ink);
   font-family: var(--serif);
   font-size: clamp(42px, 5.6vw, 86px);
@@ -235,7 +239,7 @@
 
 .hero-photo {
   position: relative;
-  min-height: 530px;
+  min-height: 480px;
   overflow: hidden;
   border-radius: 8px;
   background: var(--line);
@@ -287,7 +291,7 @@
 }
 
 .stage-panel {
-  padding: 40px clamp(24px, 5vw, 72px) 68px;
+  padding: 34px clamp(24px, 5vw, 72px) 68px;
 }
 
 .stage-heading {
@@ -720,26 +724,78 @@ button:focus-visible {
   }
 
   .side-rail {
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     height: auto;
-    padding: 18px;
+    padding: 12px 18px;
+    background: rgba(247, 244, 238, 0.94);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(16px);
   }
 
-  .stage-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .brand-lockup {
+    max-width: 100%;
   }
 
+  .rail-stage-list,
   .rail-note {
-    margin-top: 0;
+    display: none;
   }
 
   .hero-band {
     grid-template-columns: 1fr;
     min-height: 0;
+    gap: 24px;
+    padding-top: 30px;
   }
 
   .hero-photo {
     min-height: 430px;
+  }
+
+  .mobile-stage-list {
+    position: sticky;
+    top: 69px;
+    z-index: 9;
+    display: flex;
+    gap: 8px;
+    max-width: none;
+    margin: -34px calc(clamp(24px, 5vw, 72px) * -1) 24px;
+    padding: 10px clamp(24px, 5vw, 72px);
+    overflow-x: auto;
+    background: rgba(255, 252, 247, 0.95);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(16px);
+    scrollbar-width: none;
+  }
+
+  .mobile-stage-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-stage-list .stage-button {
+    width: auto;
+    min-width: 170px;
+    min-height: 48px;
+    grid-template-columns: 18px 1fr;
+    flex: 0 0 auto;
+    padding: 9px 11px;
+    background: #ffffff;
+    border-color: var(--line);
+  }
+
+  .mobile-stage-list .stage-button > svg:last-child {
+    display: none;
+  }
+
+  .mobile-stage-list .stage-button span {
+    font-size: 12px;
+  }
+
+  .mobile-stage-list .stage-button small {
+    font-size: 10px;
   }
 }
 
@@ -754,15 +810,122 @@ button:focus-visible {
 
   .hero-band,
   .stage-panel {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .side-rail {
+    padding: 10px 14px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .brand-lockup p {
+    font-size: 14px;
+  }
+
+  .brand-lockup span {
+    font-size: 10px;
+  }
+
+  .hero-band {
+    gap: 18px;
+    padding-top: 22px;
+    padding-bottom: 24px;
+  }
+
+  .kicker,
+  .stage-heading span,
+  .module-head span,
+  .field-label,
+  .chapter-card span,
+  .reveal-copy span,
+  .visual-card span {
+    font-size: 10px;
+  }
+
+  .hero-copy h1 {
+    max-width: 360px;
+    margin: 10px 0 12px;
+    font-size: clamp(38px, 12.8vw, 50px);
+    line-height: 0.96;
+  }
+
+  .hero-copy p,
+  .stage-heading p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .primary-action,
+  .secondary-action,
+  .upload-strip button {
+    min-height: 42px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .mobile-stage-list {
+    top: 55px;
+    margin: -24px -14px 20px;
+    padding: 9px 14px;
+  }
+
+  .mobile-stage-list .stage-button {
+    min-width: 148px;
+    min-height: 44px;
+  }
+
+  .stage-panel {
+    padding-top: 24px;
+    padding-bottom: 42px;
+  }
+
+  .stage-heading {
+    margin-bottom: 18px;
+  }
+
+  .stage-heading h2 {
+    margin: 6px 0;
+    font-size: 34px;
   }
 
   .hero-photo,
   .visual-card,
   .reveal-player,
   .chapter-card {
-    min-height: 360px;
+    min-height: 305px;
+  }
+
+  .module {
+    padding: 16px;
+  }
+
+  .module-head {
+    margin-bottom: 14px;
+  }
+
+  .module-head h3,
+  .reveal-copy h3 {
+    font-size: 25px;
+  }
+
+  .tone-card h4,
+  .visual-card h3,
+  .chapter-card h3,
+  .referral-card h3 {
+    font-size: 26px;
   }
 
   .guest-table article,
@@ -774,5 +937,22 @@ button:focus-visible {
     left: 14px;
     right: 14px;
     min-width: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(34px, 12vw, 44px);
+  }
+
+  .hero-photo,
+  .visual-card,
+  .reveal-player,
+  .chapter-card {
+    min-height: 280px;
   }
 }
