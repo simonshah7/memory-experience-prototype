@@ -15,7 +15,7 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import './App.css'
 
 type StageId = 'brief' | 'live' | 'reveal' | 'story' | 'guests' | 'vault'
@@ -139,10 +139,19 @@ const guests = [
 
 function App() {
   const [activeStage, setActiveStage] = useState<StageId>('brief')
+  const stagePanelRef = useRef<HTMLElement | null>(null)
   const active = useMemo(
     () => stages.find((stage) => stage.id === activeStage) ?? stages[0],
     [activeStage],
   )
+  const selectStage = (stage: StageId, shouldScroll = true) => {
+    setActiveStage(stage)
+    if (shouldScroll) {
+      window.requestAnimationFrame(() => {
+        stagePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+  }
 
   return (
     <main className="app-shell">
@@ -155,7 +164,7 @@ function App() {
           </div>
         </div>
 
-        <StageNav activeStage={activeStage} setActiveStage={setActiveStage} variant="rail" />
+        <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="rail" />
 
         <div className="rail-note">
           <Sparkles size={18} aria-hidden="true" />
@@ -173,11 +182,11 @@ function App() {
               day, and turns the final gallery into a living family archive.
             </p>
             <div className="hero-actions">
-              <button className="primary-action" type="button" onClick={() => setActiveStage('reveal')}>
+              <button className="primary-action" type="button" onClick={() => selectStage('reveal')}>
                 <Play size={17} aria-hidden="true" />
                 Preview reveal
               </button>
-              <button className="secondary-action" type="button" onClick={() => setActiveStage('brief')}>
+              <button className="secondary-action" type="button" onClick={() => selectStage('brief')}>
                 <CalendarDays size={17} aria-hidden="true" />
                 View client brief
               </button>
@@ -196,14 +205,14 @@ function App() {
           </div>
         </header>
 
-        <section className="stage-panel">
-          <StageNav activeStage={activeStage} setActiveStage={setActiveStage} variant="mobile" />
+        <section className="stage-panel" ref={stagePanelRef}>
+          <StageNav activeStage={activeStage} setActiveStage={selectStage} variant="mobile" />
           <div className="stage-heading">
             <span>{active.eyebrow}</span>
             <h2>{active.title}</h2>
             <p>{active.description}</p>
           </div>
-          <StageContent activeStage={activeStage} setActiveStage={setActiveStage} />
+          <StageContent activeStage={activeStage} setActiveStage={selectStage} />
         </section>
       </section>
     </main>
@@ -252,8 +261,10 @@ function StageContent({
   setActiveStage,
 }: {
   activeStage: StageId
-  setActiveStage: (stage: StageId) => void
+  setActiveStage: (stage: StageId, shouldScroll?: boolean) => void
 }) {
+  const [sentGuest, setSentGuest] = useState<string | null>(null)
+
   if (activeStage === 'brief') {
     return (
       <div className="content-grid brief-grid">
@@ -285,6 +296,16 @@ function StageContent({
                 transitions.
               </p>
             </div>
+          </div>
+          <div className="screen-actions">
+            <button type="button" onClick={() => setActiveStage('live')}>
+              <ImagePlus size={17} aria-hidden="true" />
+              Open guest stream
+            </button>
+            <button type="button" onClick={() => setActiveStage('reveal')}>
+              <Play size={17} aria-hidden="true" />
+              Jump to reveal
+            </button>
           </div>
         </section>
 
@@ -366,11 +387,23 @@ function StageContent({
             ))}
           </div>
         </section>
-        <VisualCard
-          image="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80"
-          label="Guest perspective"
-          title="The fragments the photographer would never otherwise hear."
-        />
+        <section className="module phone-preview">
+          <div className="phone-topbar">
+            <span>Guest view</span>
+            <strong>Amelia & Jonah</strong>
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80"
+            alt="Guest moment at a wedding reception"
+          />
+          <div className="guest-prompt">
+            <span>Prompt of the hour</span>
+            <p>What moment should the couple hear about later?</p>
+          </div>
+          <button type="button" onClick={() => setActiveStage('reveal')}>
+            Send to curator
+          </button>
+        </section>
       </div>
     )
   }
@@ -410,6 +443,16 @@ function StageContent({
             <span>Share-ready set</span>
             <strong>6 images</strong>
           </div>
+          <div className="screen-actions stacked">
+            <button type="button" onClick={() => setActiveStage('story')}>
+              <Camera size={17} aria-hidden="true" />
+              Open full gallery
+            </button>
+            <button type="button" onClick={() => setActiveStage('guests')}>
+              <Users size={17} aria-hidden="true" />
+              Prepare guest links
+            </button>
+          </div>
         </section>
       </div>
     )
@@ -417,17 +460,50 @@ function StageContent({
 
   if (activeStage === 'story') {
     return (
-      <div className="chapter-grid">
-        {chapters.map((chapter) => (
-          <article className="chapter-card" key={chapter.name}>
-            <img src={chapter.image} alt={`${chapter.name} wedding chapter`} />
+      <div className="gallery-screen">
+        <section className="module gallery-browser">
+          <div className="module-head">
             <div>
-              <span>{chapter.count} images</span>
-              <h3>{chapter.name}</h3>
-              <p>{chapter.mood}</p>
+              <span>Client gallery</span>
+              <h3>The day as a story</h3>
             </div>
-          </article>
-        ))}
+            <Camera size={19} aria-hidden="true" />
+          </div>
+          <div className="chapter-tabs">
+            {chapters.map((chapter, index) => (
+              <button className={index === 0 ? 'active' : ''} key={chapter.name} type="button">
+                {chapter.name}
+              </button>
+            ))}
+          </div>
+          <div className="featured-chapter">
+            <img src={chapters[0].image} alt="Anticipation wedding chapter" />
+            <div>
+              <span>{chapters[0].count} images</span>
+              <h4>{chapters[0].name}</h4>
+              <p>{chapters[0].mood}</p>
+            </div>
+          </div>
+        </section>
+        <div className="chapter-grid">
+          {chapters.map((chapter) => (
+            <article className="chapter-card" key={chapter.name}>
+              <img src={chapter.image} alt={`${chapter.name} wedding chapter`} />
+              <div>
+                <span>{chapter.count} images</span>
+                <h3>{chapter.name}</h3>
+                <p>{chapter.mood}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <section className="module next-step-card">
+          <h3>Next: turn gallery viewers into private recipients.</h3>
+          <p>Faces and relationships become thoughtful guest links rather than generic downloads.</p>
+          <button type="button" onClick={() => setActiveStage('guests')}>
+            Build guest links
+          </button>
+        </section>
       </div>
     )
   }
@@ -451,8 +527,12 @@ function StageContent({
                   <span>{guest.relation}</span>
                 </div>
                 <span>{guest.photos} photos</span>
-                <small>{guest.status}</small>
-                <button type="button" aria-label={`Share link with ${guest.name}`}>
+                <small>{sentGuest === guest.name ? 'Link sent just now' : guest.status}</small>
+                <button
+                  type="button"
+                  aria-label={`Share link with ${guest.name}`}
+                  onClick={() => setSentGuest(guest.name)}
+                >
                   <Share2 size={17} aria-hidden="true" />
                 </button>
               </article>
@@ -466,6 +546,12 @@ function StageContent({
             Every guest link feels like a gift. The photographer’s brand travels through the best
             moments, not an advert.
           </p>
+          <div className="screen-actions stacked inverted">
+            <button type="button" onClick={() => setActiveStage('vault')}>
+              <Archive size={17} aria-hidden="true" />
+              Open aftercare vault
+            </button>
+          </div>
         </section>
       </div>
     )
@@ -503,6 +589,12 @@ function StageContent({
               <p>Future shoots attach to the same story, not a new folder.</p>
             </div>
           </article>
+        </div>
+        <div className="vault-calendar">
+          <span>Upcoming memory touchpoints</span>
+          <strong>1 month: album shortlist</strong>
+          <strong>6 months: framed print prompt</strong>
+          <strong>1 year: anniversary filmlet</strong>
         </div>
       </section>
       <VisualCard
