@@ -470,6 +470,79 @@
   gap: 12px;
 }
 
+.psychology-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.psychology-grid,
+.trust-list,
+.review-steps {
+  display: grid;
+  gap: 10px;
+}
+
+.psychology-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.psychology-grid article,
+.trust-list span,
+.review-steps span {
+  padding: 14px;
+  background: #f9f5ed;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.psychology-grid strong {
+  color: var(--ink);
+}
+
+.psychology-grid p {
+  margin: 6px 0 0;
+  color: var(--body);
+  line-height: 1.45;
+}
+
+.review-engine,
+.review-moment {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  background: #203c39;
+  color: #fffaf2;
+}
+
+.review-engine h3,
+.review-moment h3 {
+  margin: 0;
+  color: #fffaf2;
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.12;
+}
+
+.review-engine p,
+.review-moment p {
+  margin: 0;
+  color: rgba(255, 250, 242, 0.82);
+  line-height: 1.5;
+}
+
+.review-engine .field-label,
+.review-moment .field-label {
+  color: rgba(255, 250, 242, 0.72);
+}
+
+.review-steps span {
+  color: #fffaf2;
+  background: rgba(255, 250, 242, 0.08);
+  border-color: rgba(255, 250, 242, 0.22);
+  font-weight: 800;
+}
+
 .workflow-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 76px;
@@ -499,7 +572,7 @@
 }
 
 .guest-screen {
-  grid-template-columns: minmax(300px, 0.65fr) minmax(0, 1fr);
+  grid-template-columns: minmax(300px, 0.62fr) minmax(0, 1fr);
 }
 
 .guest-phone-large {
@@ -537,6 +610,40 @@
   color: #fffaf2;
   background: #203c39;
   border-radius: 8px;
+}
+
+.review-moment {
+  grid-column: 1 / -1;
+}
+
+.review-card {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  color: var(--ink);
+  background: #fffaf2;
+  border-radius: 8px;
+}
+
+.review-card strong {
+  display: block;
+  color: var(--ink);
+}
+
+.review-card p {
+  margin: 4px 0 0;
+  color: var(--body);
+}
+
+.google-review-button {
+  min-height: 44px;
+  border: 1px solid rgba(255, 250, 242, 0.42);
+  border-radius: 7px;
+  color: #fffaf2;
+  background: transparent;
+  font-weight: 800;
 }
 
 .guest-table.compact article {
@@ -1136,6 +1243,12 @@
   border-radius: 7px;
 }
 
+.vault-review {
+  margin-top: 16px;
+  background: #f9f5ed;
+  border: 1px solid var(--line);
+}
+
 button:focus-visible,
 .stage-button:focus-visible {
   outline: 3px solid rgba(154, 87, 55, 0.28);
@@ -1257,7 +1370,8 @@ button:focus-visible,
   .reveal-layout,
   .chapter-grid,
   .metric-grid,
-  .guest-screen {
+  .guest-screen,
+  .psychology-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1392,7 +1506,9 @@ button:focus-visible,
   .next-step-card h3,
   .command-hero h3,
   .decision-panel h3,
-  .guest-delivery h3 {
+  .guest-delivery h3,
+  .review-engine h3,
+  .review-moment h3 {
     font-size: 26px;
   }
 

@@ -5,6 +5,7 @@ import {
   ChevronRight,
   Clock,
   Download,
+  Gift,
   Heart,
   ImagePlus,
   Link,
@@ -13,6 +14,7 @@ import {
   Send,
   Share2,
   Sparkles,
+  Star,
   Users,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -168,6 +170,25 @@ const guests = [
   { name: 'Nora Patel', photos: 9, status: 'Print suggestion', relation: 'Mother' },
 ]
 
+const psychologyLevers = [
+  {
+    title: 'Anticipation',
+    detail: 'Clients begin emotionally investing before the event through prompts and private notes.',
+  },
+  {
+    title: 'Peak moment',
+    detail: 'The first reveal is designed as the emotional high point, not a folder delivery.',
+  },
+  {
+    title: 'Warm ending',
+    detail: 'Aftercare, prints and gratitude prompts create a strong remembered finish.',
+  },
+  {
+    title: 'Social proof',
+    detail: 'Guests receive beautiful personal links that naturally spread the photographer’s brand.',
+  },
+]
+
 function App() {
   const [activeRole, setActiveRole] = useState<RoleId>(() => {
     const hashValue = window.location.hash.replace('#', '')
@@ -248,7 +269,7 @@ function App() {
 
         <div className="rail-note">
           <Sparkles size={18} aria-hidden="true" />
-          <p>AI stays backstage: curation, tagging, sequencing, and speed.</p>
+          <p>Designed around peak moments, emotional endings and ethical review prompts.</p>
         </div>
       </aside>
 
@@ -273,6 +294,10 @@ function App() {
               >
                 <Camera size={17} aria-hidden="true" />
                 Open platform
+              </button>
+              <button className="secondary-action" type="button" onClick={() => selectRole('guest')}>
+                <Star size={17} aria-hidden="true" />
+                Review moment
               </button>
             </div>
           </div>
@@ -453,7 +478,7 @@ function PhotographerCommandCenter({
           ))}
         </section>
 
-        <section className="module decision-panel">
+      <section className="module decision-panel">
           <span className="field-label">What the photographer does next</span>
           <h3>Approve the emotional sequence, then send the reveal.</h3>
           <p>
@@ -469,6 +494,41 @@ function PhotographerCommandCenter({
               <Users size={17} aria-hidden="true" />
               View guest link
             </button>
+          </div>
+        </section>
+      </div>
+
+      <div className="content-grid">
+        <section className="module psychology-panel">
+          <div className="module-head">
+            <div>
+              <span>Experience psychology</span>
+              <h3>Built to be remembered and talked about.</h3>
+            </div>
+            <Sparkles size={19} aria-hidden="true" />
+          </div>
+          <div className="psychology-grid">
+            {psychologyLevers.map((lever) => (
+              <article key={lever.title}>
+                <strong>{lever.title}</strong>
+                <p>{lever.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="module review-engine">
+          <Star size={21} aria-hidden="true" />
+          <span className="field-label">Review engine</span>
+          <h3>Ask after the wow, never before.</h3>
+          <p>
+            The platform waits until the reveal has been opened, the gallery has been saved and the
+            client has received something meaningful.
+          </p>
+          <div className="review-steps">
+            <span>1. Send gratitude note</span>
+            <span>2. Offer Google review link</span>
+            <span>3. Ask for honest feedback</span>
           </div>
         </section>
       </div>
@@ -534,6 +594,26 @@ function GuestExperience({ setActiveRole }: { setActiveRole: (role: RoleId) => v
             See client experience
           </button>
         </div>
+      </section>
+
+      <section className="module review-moment">
+        <Gift size={21} aria-hidden="true" />
+        <span className="field-label">Gratitude moment</span>
+        <h3>“Your photographs made the day feel alive again.”</h3>
+        <p>
+          After the client opens their reveal, the platform sends a sincere thank-you note and gives
+          them an easy way to leave an honest Google review.
+        </p>
+        <div className="review-card">
+          <Star size={18} aria-hidden="true" />
+          <div>
+            <strong>Would you be willing to share your experience?</strong>
+            <p>Your review helps other families choose someone they can trust.</p>
+          </div>
+        </div>
+        <button className="google-review-button" type="button">
+          Leave an honest Google review
+        </button>
       </section>
     </div>
   )
@@ -626,6 +706,21 @@ function StageContent({
             <span>13:10 Quiet reveal with parents</span>
             <span>16:30 Guest story prompts open</span>
             <span>22:45 Final song and private exit</span>
+          </div>
+        </section>
+
+        <section className="module trust-panel">
+          <div className="module-head">
+            <div>
+              <span>Client confidence</span>
+              <h3>Why this feels premium before the camera appears</h3>
+            </div>
+            <Star size={19} aria-hidden="true" />
+          </div>
+          <div className="trust-list">
+            <span>They feel seen before the event.</span>
+            <span>They know the photographer understands family dynamics.</span>
+            <span>They can picture the reveal, not just the invoice.</span>
           </div>
         </section>
       </div>
@@ -885,6 +980,13 @@ function StageContent({
           <strong>1 month: album shortlist</strong>
           <strong>6 months: framed print prompt</strong>
           <strong>1 year: anniversary filmlet</strong>
+        </div>
+        <div className="review-card vault-review">
+          <Star size={18} aria-hidden="true" />
+          <div>
+            <strong>Review prompt queued</strong>
+            <p>Send 24 hours after the couple saves their favourite images.</p>
+          </div>
         </div>
       </section>
       <VisualCard
