@@ -10,9 +10,11 @@ import {
   ImagePlus,
   Link,
   MessageCircleHeart,
+  Palette,
   Play,
   Send,
   Share2,
+  SlidersHorizontal,
   Sparkles,
   Star,
   Users,
@@ -20,7 +22,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
-type StageId = 'brief' | 'live' | 'reveal' | 'story' | 'guests' | 'vault'
+type StageId = 'brief' | 'style' | 'live' | 'reveal' | 'story' | 'guests' | 'vault'
 type RoleId = 'photographer' | 'client' | 'guest'
 
 const stages: Array<{
@@ -36,6 +38,13 @@ const stages: Array<{
     title: 'Private Memory Space',
     description: 'Capture emotional priorities, key people, timing, and tone before the event.',
     icon: Heart,
+  },
+  {
+    id: 'style',
+    eyebrow: 'Style',
+    title: 'Style Studio',
+    description: 'Choose a signature editing direction before final delivery.',
+    icon: Palette,
   },
   {
     id: 'live',
@@ -186,6 +195,30 @@ const psychologyLevers = [
   {
     title: 'Social proof',
     detail: 'Guests receive beautiful personal links that naturally spread the photographer’s brand.',
+  },
+]
+
+const stylePresets = [
+  {
+    name: 'Editorial Romance',
+    mood: 'polished, luminous, magazine-like',
+    description: 'Clean skin tones, lifted whites and elegant contrast for a luxury finish.',
+    image:
+      'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    name: 'Documentary Warmth',
+    mood: 'natural, candid, emotionally close',
+    description: 'True-to-life colour with warm highlights and gentle contrast.',
+    image:
+      'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    name: 'Cinematic Evening',
+    mood: 'deep, dramatic, reception-ready',
+    description: 'Richer shadows, warmer light and a filmic feeling for evening chapters.',
+    image:
+      'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80',
   },
 ]
 
@@ -453,6 +486,8 @@ function PhotographerCommandCenter({
         </article>
       </section>
 
+      <StyleStudio mode="photographer" />
+
       <div className="content-grid">
         <section className="module workflow-board">
           <div className="module-head">
@@ -533,6 +568,89 @@ function PhotographerCommandCenter({
         </section>
       </div>
     </div>
+  )
+}
+
+function StyleStudio({ mode }: { mode: 'photographer' | 'client' }) {
+  const [activeStyle, setActiveStyle] = useState(stylePresets[0].name)
+  const selectedStyle = stylePresets.find((style) => style.name === activeStyle) ?? stylePresets[0]
+
+  return (
+    <section className="module style-studio">
+      <div className="module-head">
+        <div>
+          <span>{mode === 'photographer' ? 'Style Studio' : 'Client style preview'}</span>
+          <h3>
+            {mode === 'photographer'
+              ? 'Set the visual language before delivery.'
+              : 'Choose the feeling you connect with most.'}
+          </h3>
+        </div>
+        <Palette size={20} aria-hidden="true" />
+      </div>
+
+      <div className="style-workspace">
+        <div className="style-preview" style={{ backgroundImage: `url(${selectedStyle.image})` }}>
+          <img src={selectedStyle.image} alt={`${selectedStyle.name} preview`} />
+          <div>
+            <span>{selectedStyle.mood}</span>
+            <h4>{selectedStyle.name}</h4>
+            <p>{selectedStyle.description}</p>
+          </div>
+        </div>
+
+        <div className="style-controls">
+          <div className="style-options">
+            {stylePresets.map((style) => (
+              <button
+                className={style.name === activeStyle ? 'active' : ''}
+                key={style.name}
+                type="button"
+                onClick={() => setActiveStyle(style.name)}
+              >
+                <strong>{style.name}</strong>
+                <span>{style.mood}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="tone-sliders">
+            {[
+              ['Warmth', 'Golden', 72],
+              ['Drama', mode === 'photographer' ? 'Controlled' : 'Soft cinematic', 58],
+              ['Texture', 'Light film grain', 42],
+              ['Colour', 'True-to-life', 64],
+            ].map(([label, value, width]) => (
+              <div className="tone-slider" key={label}>
+                <div>
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+                <i style={{ width: `${width}%` }} />
+              </div>
+            ))}
+          </div>
+
+          <div className="style-note">
+            <SlidersHorizontal size={18} aria-hidden="true" />
+            <p>
+              {mode === 'photographer'
+                ? 'Photographer keeps final control. The platform checks consistency across skin tones, white balance and chapter mood.'
+                : 'Your photographer will refine the final edits. This only helps choose the emotional direction.'}
+            </p>
+          </div>
+
+          <div className="screen-actions">
+            <button type="button">
+              {mode === 'photographer' ? 'Send 3 previews to client' : 'Choose this direction'}
+            </button>
+            <button type="button">
+              {mode === 'photographer' ? 'Apply to story chapters' : 'Compare another style'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -721,6 +839,34 @@ function StageContent({
             <span>They feel seen before the event.</span>
             <span>They know the photographer understands family dynamics.</span>
             <span>They can picture the reveal, not just the invoice.</span>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
+  if (activeStage === 'style') {
+    return (
+      <div className="client-style-screen">
+        <StyleStudio mode="client" />
+        <section className="module style-explainer">
+          <div className="module-head">
+            <div>
+              <span>How this helps</span>
+              <h3>Style becomes a conversation, not a correction round.</h3>
+            </div>
+            <Sparkles size={19} aria-hidden="true" />
+          </div>
+          <div className="trust-list">
+            <span>Clients understand the edit direction before final delivery.</span>
+            <span>The photographer protects their signature look and avoids random presets.</span>
+            <span>Chapters can carry different moods while the gallery still feels consistent.</span>
+          </div>
+          <div className="screen-actions">
+            <button type="button" onClick={() => setActiveStage('reveal')}>
+              <Play size={17} aria-hidden="true" />
+              Preview reveal
+            </button>
           </div>
         </section>
       </div>
